@@ -1,3 +1,15 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script type="text/javascript">
+    </script>
+</head>
+<body>
+<form method="post">
+<input type="text" name="conversion" />
+<input type="submit" value="Sprawdź" />
+</form>
+
 <?php
 
 class PhoneKeyboardConverter
@@ -10,7 +22,7 @@ class PhoneKeyboardConverter
     public function convertToNumeric(string $string_to_convert) : string
     {
         $return_string = '';
-        $new_string_array = str_split($string_to_convert);
+        $new_string_array = str_split(strtoupper($string_to_convert));
 
         foreach($new_string_array as $key => $char) {
             $return_string .= $this->searchMatrixForLetter($char);
@@ -27,7 +39,7 @@ class PhoneKeyboardConverter
         $new_numbers_array = explode(',', $string_to_convert);
 
         foreach($new_numbers_array as $number) {
-            $return_string .= $this->findLetterByNumbers($number);
+            $return_string .= strtolower($this->findLetterByNumbers($number));
         }
 
         return $return_string;
@@ -35,14 +47,14 @@ class PhoneKeyboardConverter
 
     private function findLetterByNumbers(string $numbers) : string
     {
-        return $_matrix[substr($numbers,0,1)][(strlen($numbers)-1)];
+        return $this->_matrix[substr($numbers,0,1)][(strlen($numbers)-1)];
     }
 
     private function searchMatrixForLetter(string $char) : string
     {
         $return_string = '';
 
-        foreach($_matrix as $number => $chars) {
+        foreach($this->_matrix as $number => $chars) {
             if (is_array($chars)) {
                 if (in_array($char, $chars)) {
                     for($i = 0; $i < (array_search($char, $chars)+1); $i++) {
@@ -53,5 +65,24 @@ class PhoneKeyboardConverter
             } elseif ($chars === $char)
                 return $number;
         }
+        return $return_string;
     }
 }
+
+if (isset($_POST['conversion'])) {
+    $PhoneKeyboardConverter = new PhoneKeyboardConverter();
+
+    $conversion = strip_tags($_POST['conversion']);
+
+    if (strstr($conversion, ' ')) {
+        $converted = $PhoneKeyboardConverter->convertToNumeric($conversion);
+    } else {
+        $converted = $PhoneKeyboardConverter->convertToString($conversion);
+    }
+
+    echo "<p>Oryginalny tekst: $conversion<br />Tekst zmieniony: $converted";
+}
+?>
+
+</body>
+</html>
