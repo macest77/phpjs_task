@@ -2,6 +2,70 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <script type="text/javascript">
+        var usersArr = [
+                {username: 'Jan Kowalski', birthYear: 1983, salary: 4200},
+                {username: 'Anna Nowak', birthYear: 1994, salary: 7500},
+                {username: 'Jakub Jakubowski', birthYear: 1985, salary: 18000},
+                {username: 'Piotr Kozak', birthYear: 2000, salary: 4999},
+                {username: 'Marek Sinica', birthYear: 1989, salary: 7200},
+                {username: 'Kamila Wiśniewska', birthYear: 1972, salary: 6800},
+            ];
+        var messagesSalary = [
+                [15000, 'Witaj, prezesie!'],
+                [5000, '<name>, szykuj się na podwyżkę!'],
+            ];
+        var messagesBirth = [
+                'Witaj, <name>! W tym roku kończysz <obliczony_wiek_rocznikowy> lat!',
+                '<name>, jesteś zwolniony!',
+        ];
+        function checkSalaryOrBirth(userArray, kind)
+        {
+            if (checkStructure(userArray)) { 
+                if (kind == 'salary') {
+                    if (userArray.salary > messagesSalary[0][0]){
+                        console.log(messagesSalary[0][1].replace('<name>', userArray.username));
+                        return true;
+                    } else if (userArray.salary < messagesSalary[1][0]) {
+                        console.log(messagesSalary[1][1].replace('<name>', userArray.username));
+                        return true;
+                    }
+                } else {
+                    var currentYear = new Date().getFullYear();
+                    var age = currentYear - userArray.birthYear;
+                    var birthModulo = age % 2;
+                    var message = messagesBirth[birthModulo].replace('<name>', userArray.username);
+                    message = message.replace('<obliczony_wiek_rocznikowy>', age);
+
+                    console.log(message);
+                    return true;
+                }
+            } else {
+                console.log(userArray);
+            }
+            return false;
+        }
+        function checkStructure(array)
+        {
+            return (array.username && array.birthYear && array.salary);
+        }
+        function welcomeUsers(array)
+        {
+            if (Array.isArray(array)) {
+                array.forEach(subarray => {
+                    if (checkSalaryOrBirth(subarray, 'salary')) {}
+                    else if (checkSalaryOrBirth(subarray, 'birth')) {}
+                    else {
+                        console.log('Wystąpił błąd');
+                    }
+                });
+            } else {
+                console.log('Podano błędne zmienne');
+            }
+        }
+        function exampleUsers()
+        {
+            welcomeUsers(usersArr);
+        }
     </script>
 </head>
 <body>
@@ -9,6 +73,9 @@
 <input type="text" name="conversion" />
 <input type="submit" value="Sprawdź" />
 </form>
+
+<hr />
+<button onclick="exampleUsers();">Uruchom przyładową strukturę welcomeUsers</button>
 
 <?php
 
